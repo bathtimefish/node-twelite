@@ -1,7 +1,7 @@
 {
-  "name": "node-twelite",
-  "version": "0.0.1",
-  "description": "",
+  "name": "twelite",
+  "version": "0.1.0",
+  "description": "a TWE-LITE data reader on node.js",
   "main": "twelite.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
