@@ -4,6 +4,7 @@ var assign = require('object.assign').getPolyfill();
 var util = require('util');
 
 var defaultSettings = {
+    type: 'easyapp',
     autoOpen: true,
     baudRate: 115200,
     dataBits: 8,
@@ -67,11 +68,14 @@ TweLite.prototype.open = function(portname, settings, callback) {
         return this._error(new Error('Port is opening'), callback);
     }
     this.opening = true;
-    this.serialport = new SerialPort.SerialPort(portname, settings);
+    var tweliteType = settings.type;
+    var serialSettings = delete settings.type;
+    //console.info(serialSettings);
+    this.serialport = new SerialPort.SerialPort(portname, serialSettings);
     this.serialport.on('open', function() {
         this.isOpen = true;
         this.opening = false;
-        this.listenData();
+        this.listenData(tweliteType);
         if(callback) { callback.call(this, null); }
     }.bind(this));
     this.serialport.on('error', function(err) {
@@ -85,16 +89,27 @@ TweLite.prototype.open = function(portname, settings, callback) {
     }.bind(this));
 };
 
-TweLite.prototype.listenData = function() {
+TweLite.prototype.listenData = function(type) {
     this.serialport.on('data', function(raw) {
-        var obj = this.parseData(raw);
+        var obj = this.dispatchDataByType(type);
         this.emit('data', obj);
     }.bind(this));
 };
 
-TweLite.prototype.parseData = function(buffer) {
+TweLite.prototype.dispatchDataByType = function(type) {
+    var obj = {};
+    switch(type) {
+        case 'easyapp':
+            obj = this.parseEasyAppData(raw);
+            break;
+    }
+    return obj;
+};
+
+TweLite.prototype.parseEasyAppData = function(buffer) {
     var data = {};
     data.raw = buffer;
+    // Ref: http://qiita.com/Omegamega/items/b15bae4654f197ff9da8#%E7%9B%B8%E6%89%8B%E7%AB%AF%E6%9C%AB%E3%81%AE%E7%8A%B6%E6%85%8B%E9%80%9A%E7%9F%A5%E3%81%8B%E3%82%89%E9%9B%BB%E6%B3%A2%E5%BC%B7%E5%BA%A6%E3%81%A8%E9%9B%BB%E6%BA%90%E9%9B%BB%E5%9C%A7%E3%81%8C%E4%B9%97%E3%81%A3%E3%81%A6%E3%81%84%E3%82%8B
     data.deviceId = parseInt(buffer.slice(1,3).toString(), 16);
     data.datatype = buffer.slice(3,5).toString();
     data.packetId = buffer.slice(5,7).toString();
@@ -105,7 +120,6 @@ TweLite.prototype.parseData = function(buffer) {
     data.timestamp = parseInt(buffer.slice(21,25).toString(), 16);
     data.repeater_flag = parseInt(buffer.slice(25,27).toString(), 16);
     data.battery = parseInt(buffer.slice(27,31).toString(), 16);
-    // Ref: http://qiita.com/Omegamega/items/b15bae4654f197ff9da8#%E7%9B%B8%E6%89%8B%E7%AB%AF%E6%9C%AB%E3%81%AE%E7%8A%B6%E6%85%8B%E9%80%9A%E7%9F%A5%E3%81%8B%E3%82%89%E9%9B%BB%E6%B3%A2%E5%BC%B7%E5%BA%A6%E3%81%A8%E9%9B%BB%E6%BA%90%E9%9B%BB%E5%9C%A7%E3%81%8C%E4%B9%97%E3%81%A3%E3%81%A6%E3%81%84%E3%82%8B
     var rawDigitalIn = parseInt(buffer.slice(33,35).toString(), 16);
     data.digialIn = [
         (rawDigitalIn >> 0 & 1) ? true : false,
