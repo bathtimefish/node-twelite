@@ -16,7 +16,7 @@ OSXでは`/dev/tty.usbserial-*******`のようになります。
 ```javascript
 'use strict';
 
-var NodeTwelite = require('../twelite.js');
+var NodeTwelite = require('twelite');
 
 var portName = '[USB PORT NAME]';
 var twelite = new NodeTwelite(portName);
