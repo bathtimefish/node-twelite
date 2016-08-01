@@ -7,6 +7,10 @@ node-tweliteは現時点で TWE-LITE 超簡単！TWEアプリ のデータフォ
 
 # Quick Start
 
+```
+npm install twelite --save
+```
+
 MONOSTICKをUSB接続した端末と、その端末と通信している[TWE-LITE DIP](https://mono-wireless.com/jp/products/TWE-Lite-DIP/index.html)などのモジュールがあるとします。
 その端末上で以下を実行します。
 
