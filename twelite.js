@@ -69,7 +69,8 @@ TweLite.prototype.open = function(portname, settings, callback) {
     }
     this.opening = true;
     var tweliteType = settings.type;
-    var serialSettings = delete settings.type;
+    delete settings.type;
+    var serialSettings = settings;
     //console.info(serialSettings);
     this.serialport = new SerialPort.SerialPort(portname, serialSettings);
     this.serialport.on('open', function() {
@@ -91,12 +92,12 @@ TweLite.prototype.open = function(portname, settings, callback) {
 
 TweLite.prototype.listenData = function(type) {
     this.serialport.on('data', function(raw) {
-        var obj = this.dispatchDataByType(type);
+        var obj = this.dispatchDataByType(type, raw);
         this.emit('data', obj);
     }.bind(this));
 };
 
-TweLite.prototype.dispatchDataByType = function(type) {
+TweLite.prototype.dispatchDataByType = function(type, raw) {
     var obj = {};
     switch(type) {
         case 'easyapp':

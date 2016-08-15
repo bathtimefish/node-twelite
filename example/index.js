@@ -2,7 +2,7 @@
 
 var NodeTwelite = require('../twelite.js');
 
-var portName = '/dev/tty.usbserial-MWEUO5W';
+var portName = '[YOUR USB PORT NAME]';
 var twelite = new NodeTwelite(portName);
 
 twelite.on('data', function(data) {
