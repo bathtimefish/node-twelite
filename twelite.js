@@ -138,7 +138,7 @@ TweLite.prototype.parseEasyAppData = function(buffer) {
     data.analogIn = [
         parseInt(buffer.slice(37,39).toString(), 16),
         parseInt(buffer.slice(39,41).toString(), 16),
-        parseInt(buffer.slice(41,44).toString(), 16),
+        parseInt(buffer.slice(41,43).toString(), 16),
         parseInt(buffer.slice(43,45).toString(), 16),
     ]
     data.analogOffset = parseInt(buffer.slice(45,47).toString(), 16);
