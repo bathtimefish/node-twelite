@@ -146,5 +146,11 @@ TweLite.prototype.parseEasyAppData = function(buffer) {
     return data;
 }
 
+TweLite.prototype.write = function(buffer, callback) {
+    var data = buffer;
+    this.serialport.write(data, function(err,result) {
+        callback(err,result);
+    });
+};
 
 module.exports = TweLite;
